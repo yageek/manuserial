@@ -1,0 +1,13 @@
+= ComboBox = 
+
+Permettant de choisir la vitesse de transmission parmis les vitesses standard
+*2400
+*4800
+*9600
+*19200
+*38400
+*54600
+*115200
+
+pb, il manque la possibilité d'avoir une valeur manuelle. 
+avantage : sympa d'utilisation.
