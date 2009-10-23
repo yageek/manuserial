@@ -4,6 +4,6 @@ permet la visualisation de données sur le port série et de les formater selon 
 
 = Details=
 
-    * ouverture du port série à différents baudrates
+    * ouverture du port série à différents Baudrates
     * envoi de commandes en ascii ou hexa
     * affichage de données recues en hexa ou en string 
