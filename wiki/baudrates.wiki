@@ -1,4 +1,4 @@
-= ComboBox = 
+= comboBox = 
 
 Permettant de choisir la vitesse de transmission parmis les vitesses standard
 *2400
