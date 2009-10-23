@@ -1,5 +1,3 @@
-#index Présentation du projet
-
 = Terminal Serie multiplateforme =
 
 permet la visualisation de données sur le port série et de les formater selon différents critères
