@@ -9,10 +9,13 @@ package manuserial;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
+import java.awt.Dimension;
+import javax.swing.GroupLayout.SequentialGroup;
 import manuserial.RS232.RS232DataEvent;
 import manuserial.RS232.RS232DataListener;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
@@ -27,11 +30,44 @@ public class RS232Frame extends javax.swing.JFrame {
     private boolean portDispo;
     private String inBuffer;    //toujours en hexa
 
+    private  int NB_MAX_CMD_LINE = 5;
+
+    private manuserial.jPanelLineCmd jPanelLinesCmd[];
+
+    ParallelGroup pLayoutGroupH;
+    SequentialGroup pLayoutSeqGroupV;
+    javax.swing.GroupLayout jPanel5Layout;
 
     /** Creates new form RS232Frame */
     public RS232Frame() {
         initComponents();
 
+        jPanelLinesCmd = new manuserial.jPanelLineCmd[NB_MAX_CMD_LINE];
+        
+        jPanelLinesCmd[0] = new manuserial.jPanelLineCmd("Cmd 0");
+
+        jPanel5.setPreferredSize(new java.awt.Dimension(569, 31));
+
+        jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+
+        pLayoutGroupH = jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
+        ParallelGroup pLayoutGroupV = jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
+        pLayoutSeqGroupV = jPanel5Layout.createSequentialGroup();
+
+
+       pLayoutGroupH.addComponent(jPanelLinesCmd[0], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
+       pLayoutSeqGroupV.addComponent(jPanelLinesCmd[0], javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE);
+       pLayoutSeqGroupV.addContainerGap();
+       pLayoutSeqGroupV.addGap(5);
+
+        jPanel5Layout.setHorizontalGroup(pLayoutGroupH);
+        pLayoutGroupV.addGroup(pLayoutSeqGroupV);
+        jPanel5Layout.setVerticalGroup(pLayoutGroupV);
+        
+        jPanel5.setPreferredSize(new java.awt.Dimension(569, 35));
+        
+        
         rs232 = new RS232();
         hexa = false;
         inBuffer = new String();
@@ -42,7 +78,6 @@ public class RS232Frame extends javax.swing.JFrame {
             jTextEtat.setText("Aucun port disponible n'a été détecté !");
         }
 
-        jButSend.setEnabled(false);
 
         // <editor-fold defaultstate="collapsed" desc="Exécuté lorsque donnée reçue">
         rs232.addRS232DataListener(new RS232DataListener() {
@@ -51,7 +86,9 @@ public class RS232Frame extends javax.swing.JFrame {
                 String tmpbuf = new String(rs232.getInBuffer());
                 if (!(tmpbuf.equals(""))) {
                     if (!hexa) {
-                        jTextAreaRX.setText(jTextAreaRX.getText() + tmpbuf);
+
+                        jTextAreaRX.append(tmpbuf);
+                    //    jTextAreaRX.setText(jTextAreaRX.getText() + tmpbuf);
                     } else {
                         jTextAreaRX.setText(jTextAreaRX.getText() + stringToHexa(tmpbuf));
                     }
@@ -226,14 +263,12 @@ public class RS232Frame extends javax.swing.JFrame {
             jToggleButOpen.setSelected(false);
             jCBListPorts.setEnabled(true);
             jComboBoxBaudRates.setEnabled(true);
-            jButSend.setEnabled(false);
             return false;
         }else{
             jToggleButOpen.setText("Fermer");
             jToggleButOpen.setSelected(true);
             jCBListPorts.setEnabled(false);
             jComboBoxBaudRates.setEnabled(false);
-            jButSend.setEnabled(true);
             return true;
         }
     }
@@ -250,21 +285,33 @@ public class RS232Frame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jTextEtat = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaRX = new javax.swing.JTextArea();
-        jSeparator1 = new javax.swing.JSeparator();
-        jCBListPorts = new javax.swing.JComboBox();
-        jTextToSend = new javax.swing.JTextField();
-        jButSend = new javax.swing.JButton();
-        jToggleButOpen = new javax.swing.JToggleButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jButClearTX = new javax.swing.JButton();
         jButClearRX = new javax.swing.JButton();
         jToggleButHexa = new javax.swing.JToggleButton();
-        jCheckBoxEcho = new javax.swing.JCheckBox();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jCBListPorts = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
         jComboBoxBaudRates = new javax.swing.JComboBox();
+        jToggleButOpen = new javax.swing.JToggleButton();
+        jButtonAjouterLigne = new javax.swing.JButton();
+        jButtonSupprimerLigne = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Dialogue RS232 Nunchuck");
@@ -277,67 +324,14 @@ public class RS232Frame extends javax.swing.JFrame {
             }
         });
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
         jTextAreaRX.setColumns(20);
         jTextAreaRX.setEditable(false);
         jTextAreaRX.setLineWrap(true);
         jTextAreaRX.setRows(5);
         jTextAreaRX.setDragEnabled(true);
         jScrollPane1.setViewportView(jTextAreaRX);
-
-        jCBListPorts.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jCBListPortsItemStateChanged(evt);
-            }
-        });
-        jCBListPorts.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCBListPortsActionPerformed(evt);
-            }
-        });
-
-        jTextToSend.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextToSendActionPerformed(evt);
-            }
-        });
-        jTextToSend.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jTextToSendPropertyChange(evt);
-            }
-        });
-        jTextToSend.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextToSendKeyPressed(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextToSendKeyTyped(evt);
-            }
-        });
-
-        jButSend.setText("Envoyer");
-        jButSend.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButSendActionPerformed(evt);
-            }
-        });
-
-        jToggleButOpen.setText("Ouvrir");
-        jToggleButOpen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButOpenActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Baudrate :");
-
-        jLabel2.setText("Port :");
-
-        jButClearTX.setText("Effacer");
-        jButClearTX.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButClearTXActionPerformed(evt);
-            }
-        });
 
         jButClearRX.setText("Effacer");
         jButClearRX.addActionListener(new java.awt.event.ActionListener() {
@@ -353,78 +347,137 @@ public class RS232Frame extends javax.swing.JFrame {
             }
         });
 
-        jCheckBoxEcho.setSelected(true);
-        jCheckBoxEcho.setText("Echo");
-        jCheckBoxEcho.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(336, Short.MAX_VALUE)
+                .addComponent(jButClearRX)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jToggleButHexa))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jToggleButHexa)
+                    .addComponent(jButClearRX)))
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel2.setText("Port :");
+
+        jCBListPorts.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jCBListPortsItemStateChanged(evt);
+            }
+        });
+        jCBListPorts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxEchoActionPerformed(evt);
+                jCBListPortsActionPerformed(evt);
             }
         });
 
+        jLabel1.setText("Baudrate :");
+
         jComboBoxBaudRates.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2400", "4800", "9600", "19200", "38400", "54600", "115200" }));
         jComboBoxBaudRates.setSelectedIndex(2);
+
+        jToggleButOpen.setText("Ouvrir");
+        jToggleButOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButOpenActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jCBListPorts, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBoxBaudRates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jToggleButOpen)
+                .addContainerGap(117, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jCBListPorts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1)
+                .addComponent(jComboBoxBaudRates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jToggleButOpen)
+                .addComponent(jLabel2))
+        );
+
+        jButtonAjouterLigne.setText("Ajouter");
+        jButtonAjouterLigne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAjouterLigneActionPerformed(evt);
+            }
+        });
+
+        jButtonSupprimerLigne.setText("Supprimer");
+        jButtonSupprimerLigne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSupprimerLigneActionPerformed(evt);
+            }
+        });
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel5.setPreferredSize(new java.awt.Dimension(569, 80));
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 565, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 76, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButClearRX)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButHexa))
-                    .addComponent(jTextToSend, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jCheckBoxEcho)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButClearTX)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButSend))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCBListPorts, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBoxBaudRates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jToggleButOpen))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jButtonAjouterLigne)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonSupprimerLigne)
+                .addContainerGap(426, Short.MAX_VALUE))
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(jCBListPorts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jComboBoxBaudRates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jToggleButOpen)))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jToggleButHexa)
-                    .addComponent(jButClearRX))
+                    .addComponent(jButtonAjouterLigne)
+                    .addComponent(jButtonSupprimerLigne))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextToSend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButSend)
-                    .addComponent(jButClearTX)
-                    .addComponent(jCheckBoxEcho))
-                .addGap(6, 6, 6)
                 .addComponent(jTextEtat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -436,9 +489,6 @@ public class RS232Frame extends javax.swing.JFrame {
 
     private void jCBListPortsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBListPortsActionPerformed
     }//GEN-LAST:event_jCBListPortsActionPerformed
-
-    private void jTextToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextToSendActionPerformed
-    }//GEN-LAST:event_jTextToSendActionPerformed
 
     private void jToggleButOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButOpenActionPerformed
         if (jToggleButOpen.isSelected()) {
@@ -453,73 +503,54 @@ public class RS232Frame extends javax.swing.JFrame {
     private void jCBListPortsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jCBListPortsItemStateChanged
     }//GEN-LAST:event_jCBListPortsItemStateChanged
 
-    private void jButSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButSendActionPerformed
-        try {
-            String tmp = new String(jTextToSend.getText());
-            if (!(tmp.equals(""))) {
-                if (!hexa) {
-                    rs232.write(tmp);
-                    if (jCheckBoxEcho.isSelected()) {
-                        jTextAreaRX.setText(jTextAreaRX.getText() + tmp);
-                    }
-                } else {
-                    try {
-                        rs232.write(hexaToString(tmp));
-                        if (jCheckBoxEcho.isSelected()) {
-                            jTextAreaRX.setText(jTextAreaRX.getText() + formatHexa(tmp));
-                        }
-                        jTextToSend.setText(formatHexa(tmp));
-                        jTextEtat.setText("Données envoyées");
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Le format des données à envoyer n'est pas correct", "Damned", JOptionPane.ERROR_MESSAGE);
-                        jTextEtat.setText("Damned: le format des données à envoyer n'est pas correct");
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Impossible d'écrire sur le port", "Damned", JOptionPane.ERROR_MESSAGE);
-            jTextEtat.setText("Damned: Impossible d'écrire sur le port !");
-        }
-    }//GEN-LAST:event_jButSendActionPerformed
-
     private void jButClearRXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButClearRXActionPerformed
         jTextAreaRX.setText("");
     }//GEN-LAST:event_jButClearRXActionPerformed
-
-    private void jButClearTXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButClearTXActionPerformed
-        jTextToSend.setText("");
-    }//GEN-LAST:event_jButClearTXActionPerformed
 
     private void jToggleButHexaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButHexaActionPerformed
         if (jToggleButHexa.isSelected()) {
             jTextEtat.setText("Mode Hexadécimal");
             jToggleButHexa.setText("Afficher en ASCII");
             hexa = true;
-            jTextToSend.setText(stringToHexa(jTextToSend.getText()));
+ //           jTextToSend.setText(stringToHexa(jTextToSend.getText()));
         } else {
             jTextEtat.setText("Mode ASCII");
             jToggleButHexa.setText("Afficher en Hexadécimal");
             hexa = false;
             try {
-                jTextToSend.setText(hexaToString(jTextToSend.getText()));
+   //             jTextToSend.setText(hexaToString(jTextToSend.getText()));
             } catch (Exception ex) {
-                jTextToSend.setText("");
+   //             jTextToSend.setText("");
             }
         }
     }//GEN-LAST:event_jToggleButHexaActionPerformed
 
-    private void jTextToSendKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextToSendKeyTyped
-    }//GEN-LAST:event_jTextToSendKeyTyped
+    private int nbCmdLines = 1;
 
-    private void jTextToSendPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextToSendPropertyChange
-    }//GEN-LAST:event_jTextToSendPropertyChange
-
-    private void jTextToSendKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextToSendKeyPressed
-    }//GEN-LAST:event_jTextToSendKeyPressed
-
-    private void jCheckBoxEchoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxEchoActionPerformed
+    private void jButtonAjouterLigneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjouterLigneActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxEchoActionPerformed
+        if(nbCmdLines < NB_MAX_CMD_LINE )
+        {
+            jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines + 1)*31));
+
+            jPanelLinesCmd[nbCmdLines] = new jPanelLineCmd("Cmd "+nbCmdLines);
+            pLayoutGroupH.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
+            pLayoutSeqGroupV.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
+
+            nbCmdLines++;
+        }
+        else
+        {
+            jTextEtat.setText("Nb maximal de lignes atteind");
+        }
+    }//GEN-LAST:event_jButtonAjouterLigneActionPerformed
+
+    private void jButtonSupprimerLigneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSupprimerLigneActionPerformed
+        // TODO add your handling code here:
+        nbCmdLines--;
+        jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
+        jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines)*31));
+    }//GEN-LAST:event_jButtonSupprimerLigneActionPerformed
 
     /**
      * @param args the command line arguments
@@ -533,18 +564,19 @@ public class RS232Frame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButClearRX;
-    private javax.swing.JButton jButClearTX;
-    private javax.swing.JButton jButSend;
+    private javax.swing.JButton jButtonAjouterLigne;
+    private javax.swing.JButton jButtonSupprimerLigne;
     private javax.swing.JComboBox jCBListPorts;
-    private javax.swing.JCheckBox jCheckBoxEcho;
     private javax.swing.JComboBox jComboBoxBaudRates;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextAreaRX;
     private javax.swing.JTextField jTextEtat;
-    private javax.swing.JTextField jTextToSend;
     private javax.swing.JToggleButton jToggleButHexa;
     private javax.swing.JToggleButton jToggleButOpen;
     // End of variables declaration//GEN-END:variables
