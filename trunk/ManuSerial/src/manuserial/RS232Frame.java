@@ -10,6 +10,7 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import javax.swing.GroupLayout.SequentialGroup;
 import manuserial.RS232.RS232DataEvent;
 import manuserial.RS232.RS232DataListener;
@@ -78,6 +79,7 @@ public class RS232Frame extends javax.swing.JFrame {
             jTextEtat.setText("Aucun port disponible n'a été détecté !");
         }
 
+        jComboBoxBaudRates.setSelectedItem("9600");     //9600 baud sélectionné par défaut.
 
         // <editor-fold defaultstate="collapsed" desc="Exécuté lorsque donnée reçue">
         rs232.addRS232DataListener(new RS232DataListener() {
@@ -273,6 +275,7 @@ public class RS232Frame extends javax.swing.JFrame {
         }
     }
 
+    /** @return true si le port est ouvert ! */
     public boolean portIsOpen() {
         return rs232.isOpen();
     }
@@ -352,11 +355,11 @@ public class RS232Frame extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(336, Short.MAX_VALUE)
+                .addContainerGap(348, Short.MAX_VALUE)
                 .addComponent(jButClearRX)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToggleButHexa))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,8 +388,12 @@ public class RS232Frame extends javax.swing.JFrame {
 
         jLabel1.setText("Baudrate :");
 
-        jComboBoxBaudRates.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2400", "4800", "9600", "19200", "38400", "54600", "115200" }));
-        jComboBoxBaudRates.setSelectedIndex(2);
+        jComboBoxBaudRates.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2400", "4800", "9600", "19200", "38400", "54600", "115200", "Autre" }));
+        jComboBoxBaudRates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxBaudRatesActionPerformed(evt);
+            }
+        });
 
         jToggleButOpen.setText("Ouvrir");
         jToggleButOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -410,7 +417,7 @@ public class RS232Frame extends javax.swing.JFrame {
                 .addComponent(jComboBoxBaudRates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jToggleButOpen)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -443,7 +450,7 @@ public class RS232Frame extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 565, Short.MAX_VALUE)
+            .addGap(0, 601, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -455,14 +462,14 @@ public class RS232Frame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+            .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jButtonAjouterLigne)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSupprimerLigne)
                 .addContainerGap(426, Short.MAX_VALUE))
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -551,6 +558,22 @@ public class RS232Frame extends javax.swing.JFrame {
         jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
         jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines)*31));
     }//GEN-LAST:event_jButtonSupprimerLigneActionPerformed
+
+    private void jComboBoxBaudRatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxBaudRatesActionPerformed
+        while(jComboBoxBaudRates.getSelectedItem().equals("Autre")){
+            String newBaudRate = JOptionPane.showInputDialog(null, "Entrez une nouvelle valeur de baud rate : ", "Baud rate", JOptionPane.QUESTION_MESSAGE);
+            if(newBaudRate==null)   return;     //si clic sur annuler => tchao
+
+            try {   //essaye d'ajouter l'élément à la liste
+                int i_tmp = Integer.valueOf(newBaudRate).intValue();
+                String s_tmp = String.valueOf(i_tmp);
+                jComboBoxBaudRates.addItem(makeObj(s_tmp));   //on ajoute l'élément à la liste
+                jComboBoxBaudRates.setSelectedIndex(jComboBoxBaudRates.getItemCount()-1);   //on sélectionne la nouvelle entrée.
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Entrée invalide !", "Damned", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jComboBoxBaudRatesActionPerformed
 
     /**
      * @param args the command line arguments
