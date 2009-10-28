@@ -26,7 +26,9 @@ import javax.swing.JOptionPane;
  * @author Emmanuel Roussel
  */
 
-public class RS232 {
+
+
+public class RS232{
 
     protected OutputStream out;
     protected InputStream in;
@@ -210,6 +212,7 @@ public class RS232 {
         inBuffer = "";
         return tmp;
     }
+
 
 
 
