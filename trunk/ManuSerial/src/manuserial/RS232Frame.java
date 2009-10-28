@@ -10,7 +10,8 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.awt.Dimension;
-import java.awt.HeadlessException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.GroupLayout.SequentialGroup;
 import manuserial.RS232.RS232DataEvent;
 import manuserial.RS232.RS232DataListener;
@@ -20,13 +21,18 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
+interface HandlerTx
+{
+    public void handlerTx(String parTx);
+}
+
 /**
  *
  * @author Emmanuel Roussel
  */
-public class RS232Frame extends javax.swing.JFrame {
+public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
-    private RS232 rs232;
+    public RS232 rs232;
     private boolean hexa;
     private boolean portDispo;
     private String inBuffer;    //toujours en hexa
@@ -39,13 +45,28 @@ public class RS232Frame extends javax.swing.JFrame {
     SequentialGroup pLayoutSeqGroupV;
     javax.swing.GroupLayout jPanel5Layout;
 
+
+    /** Handler Serie : permet d'envoyer des données sur le port série depuis d'autres classes.
+     *
+     * @param parTx
+     */
+    public void handlerTx(String parTx)
+    {
+        System.out.println("Envois de "+parTx);
+        try {
+            rs232.write(parTx);
+        } catch (IOException ex) {
+            Logger.getLogger(RS232Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     /** Creates new form RS232Frame */
     public RS232Frame() {
         initComponents();
 
         jPanelLinesCmd = new manuserial.jPanelLineCmd[NB_MAX_CMD_LINE];
         
-        jPanelLinesCmd[0] = new manuserial.jPanelLineCmd("Cmd 0");
+        jPanelLinesCmd[0] = new manuserial.jPanelLineCmd("Cmd 0", this);
 
         jPanel5.setPreferredSize(new java.awt.Dimension(569, 31));
 
@@ -540,7 +561,8 @@ public class RS232Frame extends javax.swing.JFrame {
         {
             jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines + 1)*31));
 
-            jPanelLinesCmd[nbCmdLines] = new jPanelLineCmd("Cmd "+nbCmdLines);
+            jPanelLinesCmd[nbCmdLines] = new jPanelLineCmd("Cmd "+nbCmdLines, this);
+
             pLayoutGroupH.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
             pLayoutSeqGroupV.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
 
