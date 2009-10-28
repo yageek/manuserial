@@ -338,7 +338,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Dialogue RS232 Nunchuck");
+        setTitle("RS232 Terminal");
 
         jTextEtat.setEditable(false);
         jTextEtat.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -376,11 +376,11 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(348, Short.MAX_VALUE)
+                .addContainerGap(384, Short.MAX_VALUE)
                 .addComponent(jButClearRX)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToggleButHexa))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -471,7 +471,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
+            .addGap(0, 613, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -483,14 +483,14 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+            .addComponent(jTextEtat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jButtonAjouterLigne)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSupprimerLigne)
-                .addContainerGap(426, Short.MAX_VALUE))
+                .addContainerGap(474, Short.MAX_VALUE))
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -567,6 +567,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             pLayoutSeqGroupV.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
 
             nbCmdLines++;
+            this.pack();
         }
         else
         {
@@ -577,8 +578,12 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
     private void jButtonSupprimerLigneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSupprimerLigneActionPerformed
         // TODO add your handling code here:
         nbCmdLines--;
-        jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
+      //  jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
+        jPanel5.remove(jPanelLinesCmd[nbCmdLines]);
         jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines)*31));
+        this.pack();
+       // this.repaint();
+
     }//GEN-LAST:event_jButtonSupprimerLigneActionPerformed
 
     private void jComboBoxBaudRatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxBaudRatesActionPerformed
