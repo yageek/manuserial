@@ -79,7 +79,6 @@ public class jPanelLineCmd extends javax.swing.JPanel {
             int tmp = Integer.parseInt(str2.substring(i, i + 2), 16);    //conversion d'hexa en décimal
             buf.append((char) tmp);
         }
-
         return buf.toString();
     }
 
