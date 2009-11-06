@@ -45,6 +45,9 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
     SequentialGroup pLayoutSeqGroupV;
     javax.swing.GroupLayout jPanel5Layout;
 
+    public dataView datasView;
+    public Format format;
+
 
     /** Handler Serie : permet d'envoyer des données sur le port série depuis d'autres classes.
      *
@@ -100,13 +103,19 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             jTextEtat.setText("Aucun port disponible n'a été détecté !");
         }
 
-        jComboBoxBaudRates.setSelectedItem("9600");     //9600 baud sélectionné par défaut.
+        jComboBoxBaudRates.setSelectedItem("115200");     //9600 baud sélectionné par défaut.
+        
+        format = new Format();
 
         // <editor-fold defaultstate="collapsed" desc="Exécuté lorsque donnée reçue">
         rs232.addRS232DataListener(new RS232DataListener() {
 
             public void dataAvailable(RS232DataEvent evt) {
                 String tmpbuf = new String(rs232.getInBuffer());
+
+                jTextAreaRX.append(format.add(tmpbuf));
+ /*               
+
                 if (!(tmpbuf.equals(""))) {
                     if (!hexa) {
 
@@ -126,6 +135,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
                         inBuffer = inBuffer.substring(inBuffer.length() - 50);
                     }
                 }
+  */
             }
         });// </editor-fold>
 
@@ -325,6 +335,11 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         jButtonAjouterLigne = new javax.swing.JButton();
         jButtonSupprimerLigne = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuDataTable = new javax.swing.JMenuItem();
+        jMenuItemFormat = new javax.swing.JMenuItem();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -385,7 +400,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jToggleButHexa)
@@ -478,6 +493,31 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             .addGap(0, 76, Short.MAX_VALUE)
         );
 
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("tools");
+
+        jMenuDataTable.setText("data Table");
+        jMenuDataTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuDataTableActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuDataTable);
+
+        jMenuItemFormat.setText("format");
+        jMenuItemFormat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemFormatActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItemFormat);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -567,7 +607,10 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             pLayoutSeqGroupV.addComponent(jPanelLinesCmd[nbCmdLines], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
 
             nbCmdLines++;
-            this.pack();
+
+            jPanel5.revalidate();
+            jPanel5.repaint();
+
         }
         else
         {
@@ -577,12 +620,17 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
     private void jButtonSupprimerLigneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSupprimerLigneActionPerformed
         // TODO add your handling code here:
-        nbCmdLines--;
-      //  jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
-        jPanel5.remove(jPanelLinesCmd[nbCmdLines]);
-        jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines)*31));
-        this.pack();
-       // this.repaint();
+        if(nbCmdLines > 1)
+        {
+            nbCmdLines--;
+
+          //  jPanel5Layout.removeLayoutComponent(jPanelLinesCmd[nbCmdLines]);
+            jPanel5.remove(jPanelLinesCmd[nbCmdLines]);
+            jPanel5.setPreferredSize(new java.awt.Dimension(569, (nbCmdLines)*31));
+
+            jPanel5.revalidate();
+            jPanel5.repaint();
+        }
 
     }//GEN-LAST:event_jButtonSupprimerLigneActionPerformed
 
@@ -602,6 +650,17 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         }
     }//GEN-LAST:event_jComboBoxBaudRatesActionPerformed
 
+    private void jMenuDataTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDataTableActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jMenuDataTableActionPerformed
+
+    private void jMenuItemFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFormatActionPerformed
+        // TODO add your handling code here:
+        format.setVisible(true);
+
+    }//GEN-LAST:event_jMenuItemFormatActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -620,6 +679,11 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
     private javax.swing.JComboBox jComboBoxBaudRates;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuDataTable;
+    private javax.swing.JMenuItem jMenuItemFormat;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
