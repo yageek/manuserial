@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 
 /**
@@ -95,9 +96,11 @@ public class RS232{
             thReader.interrupt();
             out.close();
             in.close();
+            serialPort.close();
         } catch (IOException ex) {
         }
-        serialPort.close();
+
+
         open=false;
     }
 
