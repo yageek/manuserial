@@ -11,13 +11,12 @@
 
 package manuserial;
 
-import java.io.Console;
-import java.io.IOException;
-import java.security.acl.Owner;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.io.CharToByteASCII;
+import javax.swing.Timer;
 
 /**
  *
@@ -27,17 +26,35 @@ public class jPanelLineCmd extends javax.swing.JPanel {
 
     RS232 rs232local;
     HandlerTx hTx;
+    private Timer timer;
+
+    ActionListener timerRoutine = new ActionListener()
+    {
+
+        public void actionPerformed(ActionEvent e) {
+            envoyer();
+         //   System.out.println("Time Out");
+        }
+
+    };
+
+    private void init(HandlerTx parHandlerTx)
+    {
+        hTx = parHandlerTx;
+        timer = new Timer(100, timerRoutine);
+        this.jCheckBoxHexa.setSelected(true);
+    }
 
     /** Creates new form jPanelLineCmd */
     public jPanelLineCmd(HandlerTx parHandlerTx) {
         initComponents();
-        hTx = parHandlerTx;
+        init(parHandlerTx);
     }
     
     public jPanelLineCmd(String txt, HandlerTx parHandlerTx) {
         initComponents();
         this.jTextFieldCmd.setText(txt);
-        hTx = parHandlerTx;
+        init(parHandlerTx);
     }
 
         /**
@@ -132,6 +149,8 @@ public class jPanelLineCmd extends javax.swing.JPanel {
         jButtonEffacer = new javax.swing.JButton();
         jCheckBoxEcho = new javax.swing.JCheckBox();
         jCheckBoxHexa = new javax.swing.JCheckBox();
+        jSpinnerPeriode = new javax.swing.JSpinner();
+        jLabel1 = new javax.swing.JLabel();
 
         jTextFieldCmd.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -167,20 +186,33 @@ public class jPanelLineCmd extends javax.swing.JPanel {
             }
         });
 
+        jSpinnerPeriode.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinnerPeriodeStateChanged(evt);
+            }
+        });
+
+        jLabel1.setText("0.1s");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTextFieldCmd, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addComponent(jTextFieldCmd, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBoxHexa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBoxEcho)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonEffacer)
+                .addComponent(jSpinnerPeriode, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonEnvoyer))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonEffacer)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonEnvoyer)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,6 +220,8 @@ public class jPanelLineCmd extends javax.swing.JPanel {
                 .addComponent(jTextFieldCmd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButtonEnvoyer)
                 .addComponent(jButtonEffacer)
+                .addComponent(jLabel1)
+                .addComponent(jSpinnerPeriode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jCheckBoxEcho)
                 .addComponent(jCheckBoxHexa))
         );
@@ -199,9 +233,29 @@ public class jPanelLineCmd extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonEffacerActionPerformed
 
     private void jButtonEnvoyerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnvoyerActionPerformed
-       String txt = jTextFieldCmd.getText();
-        hTx.handlerTx(txt);
+       envoyer();
     }//GEN-LAST:event_jButtonEnvoyerActionPerformed
+
+    private void envoyer()
+    {
+       String txt = jTextFieldCmd.getText();
+       char charArray[];
+       if(jCheckBoxHexa.isSelected())       //si on veut de l'hexa
+       {
+            try {
+                txt = hexaToString(txt);
+            } catch (Exception ex) {
+                Logger.getLogger(jPanelLineCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           charArray = txt.toCharArray();
+           hTx.handlerTx(charArray, charArray.length );
+
+       }
+       else         //sinon version texte.
+       {
+            hTx.handlerTx(txt);
+       }
+    }
 
     private void formatCmd(int parKeyCode)
     {
@@ -238,11 +292,29 @@ public class jPanelLineCmd extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jCheckBoxHexaActionPerformed
 
+    private void jSpinnerPeriodeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinnerPeriodeStateChanged
+        // TODO add your handling code here:
+        Integer periode;
+        periode = (Integer)jSpinnerPeriode.getValue();
+        if(periode > 0)
+        {
+            timer.setDelay(periode*100);
+            timer.start();
+        }
+        else
+        {
+            timer.stop();
+        }
+        System.out.println("periode set to : "+periode*100);
+    }//GEN-LAST:event_jSpinnerPeriodeStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonEffacer;
     private javax.swing.JButton jButtonEnvoyer;
     private javax.swing.JCheckBox jCheckBoxEcho;
     private javax.swing.JCheckBox jCheckBoxHexa;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JSpinner jSpinnerPeriode;
     private javax.swing.JTextField jTextFieldCmd;
     // End of variables declaration//GEN-END:variables
 

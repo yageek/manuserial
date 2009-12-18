@@ -9,7 +9,8 @@ package manuserial;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -19,11 +20,12 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JOptionPane;
-import javax.swing.text.BadLocationException;
+import javax.swing.Timer;
 
 interface HandlerTx
 {
     public void handlerTx(String parTx);
+    public void handlerTx(char [] parDatas, int parLength);
 }
 
 /**
@@ -47,7 +49,9 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
     public dataView datasView;
     public Format format;
+    public Capteurs capteurs;
 
+    private Timer TimerRefresh;
 
     /** Handler Serie : permet d'envoyer des données sur le port série depuis d'autres classes.
      *
@@ -62,24 +66,43 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             Logger.getLogger(RS232Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void handlerTx(char [] parDatas, int parLength)
+    {
+        int k = 0;
+        for( k = 0; k< parLength ; k++)
+        {
+            try {
+                rs232.write(parDatas[k]);
+            } catch (IOException ex) {
+                Logger.getLogger(RS232Frame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Timer actualisation des ports dispo">
+    ActionListener ActualiseCom = new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+            if( !rs232.isOpen() )
+                updateListPorts();
+            actualise_fen();
+        }
+    };
+
 
     /** Creates new form RS232Frame */
     public RS232Frame() {
         initComponents();
 
         jPanelLinesCmd = new manuserial.jPanelLineCmd[NB_MAX_CMD_LINE];
-        
-        jPanelLinesCmd[0] = new manuserial.jPanelLineCmd("Cmd 0", this);
+        jPanelLinesCmd[0] = new manuserial.jPanelLineCmd("01 00 00 04", this);
 
         jPanel5.setPreferredSize(new java.awt.Dimension(569, 31));
-
         jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
 
         pLayoutGroupH = jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
         ParallelGroup pLayoutGroupV = jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
         pLayoutSeqGroupV = jPanel5Layout.createSequentialGroup();
-
 
        pLayoutGroupH.addComponent(jPanelLinesCmd[0], javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE);
        pLayoutSeqGroupV.addComponent(jPanelLinesCmd[0], javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE);
@@ -104,38 +127,36 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         }
 
         jComboBoxBaudRates.setSelectedItem("115200");     //9600 baud sélectionné par défaut.
-        
+
+
         format = new Format();
+        capteurs = new Capteurs(this);
+
+        jScrollPane1.setAutoscrolls(true);
+
+        TimerRefresh = new Timer(1000, ActualiseCom);      //envoi evenement toutes les secondes
+        TimerRefresh.start();
 
         // <editor-fold defaultstate="collapsed" desc="Exécuté lorsque donnée reçue">
         rs232.addRS232DataListener(new RS232DataListener() {
 
             public void dataAvailable(RS232DataEvent evt) {
                 String tmpbuf = new String(rs232.getInBuffer());
+                String toAdd = format.add(tmpbuf);
+                jTextAreaRX.append(toAdd);
 
-                jTextAreaRX.append(format.add(tmpbuf));
- /*               
+                if(jTextAreaRX.getText().length() > 0)
+                    jTextAreaRX.setCaretPosition(jTextAreaRX.getText().length()-1);
+                else
+                    jTextAreaRX.setCaretPosition(0);
 
-                if (!(tmpbuf.equals(""))) {
-                    if (!hexa) {
-
-                        jTextAreaRX.append(tmpbuf);
-                    //    jTextAreaRX.setText(jTextAreaRX.getText() + tmpbuf);
-                    } else {
-                        jTextAreaRX.setText(jTextAreaRX.getText() + stringToHexa(tmpbuf));
-                    }
-                    if (jTextAreaRX.getText().length() > 1000) {
-                        try {
-                            jTextAreaRX.setText(jTextAreaRX.getText(jTextAreaRX.getText().length() - 300, 300));
-                        } catch (BadLocationException ex) {
-                        }
-                    }
-                    inBuffer += stringToHexa(tmpbuf);
-                    if (inBuffer.length() > 200) {
-                        inBuffer = inBuffer.substring(inBuffer.length() - 50);
-                    }
+                if(capteurs.activated)
+                {
+                    if(toAdd.length() > 0)
+                        capteurs.updateData(toAdd);
                 }
-  */
+
+                //getContentPane().add(jTextAreaRX);
             }
         });// </editor-fold>
 
@@ -340,6 +361,8 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
         jMenu2 = new javax.swing.JMenu();
         jMenuDataTable = new javax.swing.JMenuItem();
         jMenuItemFormat = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jMenuItemCapteurs = new javax.swing.JMenuItem();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -411,6 +434,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
         jLabel2.setText("Port :");
 
+        jCBListPorts.setEditable(true);
         jCBListPorts.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jCBListPortsItemStateChanged(evt);
@@ -424,7 +448,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
         jLabel1.setText("Baudrate :");
 
-        jComboBoxBaudRates.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2400", "4800", "9600", "19200", "38400", "54600", "115200", "Autre" }));
+        jComboBoxBaudRates.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2400", "4800", "9600", "19200", "38400", "57600", "115200", "Autre" }));
         jComboBoxBaudRates.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxBaudRatesActionPerformed(evt);
@@ -513,6 +537,15 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
             }
         });
         jMenu2.add(jMenuItemFormat);
+        jMenu2.add(jSeparator1);
+
+        jMenuItemCapteurs.setText("Capteurs");
+        jMenuItemCapteurs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCapteursActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItemCapteurs);
 
         jMenuBar1.add(jMenu2);
 
@@ -559,7 +592,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
     }//GEN-LAST:event_jCBListPortsActionPerformed
 
     private void jToggleButOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButOpenActionPerformed
-        if (jToggleButOpen.isSelected()) {
+        if ( jToggleButOpen.isSelected() ) {
             openPort();
         } else {
             closePort();
@@ -573,6 +606,7 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
     private void jButClearRXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButClearRXActionPerformed
         jTextAreaRX.setText("");
+        format.reinit();
     }//GEN-LAST:event_jButClearRXActionPerformed
 
     private void jToggleButHexaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButHexaActionPerformed
@@ -661,6 +695,11 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
 
     }//GEN-LAST:event_jMenuItemFormatActionPerformed
 
+    private void jMenuItemCapteursActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCapteursActionPerformed
+        // TODO add your handling code here:
+        capteurs.setVisible(true);
+    }//GEN-LAST:event_jMenuItemCapteursActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -683,12 +722,14 @@ public class RS232Frame extends javax.swing.JFrame  implements HandlerTx {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuDataTable;
+    private javax.swing.JMenuItem jMenuItemCapteurs;
     private javax.swing.JMenuItem jMenuItemFormat;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextAreaRX;
     private javax.swing.JTextField jTextEtat;
     private javax.swing.JToggleButton jToggleButHexa;

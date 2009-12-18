@@ -17,15 +17,20 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jTextFieldCmd" pref="391" max="32767" attributes="0"/>
+              <Component id="jTextFieldCmd" pref="281" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jCheckBoxHexa" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jCheckBoxEcho" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButtonEffacer" min="-2" max="-2" attributes="0"/>
+              <Component id="jSpinnerPeriode" min="-2" pref="44" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jButtonEffacer" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jButtonEnvoyer" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -35,6 +40,8 @@
               <Component id="jTextFieldCmd" alignment="3" min="-2" max="-2" attributes="0"/>
               <Component id="jButtonEnvoyer" alignment="3" min="-2" max="-2" attributes="0"/>
               <Component id="jButtonEffacer" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="jSpinnerPeriode" alignment="3" min="-2" max="-2" attributes="0"/>
               <Component id="jCheckBoxEcho" alignment="3" min="-2" max="-2" attributes="0"/>
               <Component id="jCheckBoxHexa" alignment="3" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -76,6 +83,16 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxHexaActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JSpinner" name="jSpinnerPeriode">
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jSpinnerPeriodeStateChanged"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0.1s"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
